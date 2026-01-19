@@ -1,0 +1,28 @@
+namespace ACBindingsTest.Internal;
+
+
+/// <summary>Defines an RPC channel buffer with a virtual table pointer for dispatching operations within the communication framework.</summary>
+public unsafe struct IRpcChannelBuffer
+{
+    // Child Types
+    public unsafe struct IRpcChannelBuffer_vtbl
+    {
+        // Members
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, ACBindingsTest.Internal._GUID*, void**, int> QueryInterface; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, uint> AddRef; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, uint> Release; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, System.IntPtr, ACBindingsTest.Internal._GUID*, int> GetBuffer; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, System.IntPtr, uint*, int> SendReceive; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, System.IntPtr, int> FreeBuffer; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, uint*, void**, int> GetDestCtx; // function pointer
+        public static delegate* unmanaged[Stdcall]<ACBindingsTest.Internal.IRpcChannelBuffer*, int> IsConnected; // function pointer
+
+        // Methods
+    }
+
+    // Members
+    public System.IntPtr lpVtbl; // vtable pointer
+
+    // Methods
+}
+

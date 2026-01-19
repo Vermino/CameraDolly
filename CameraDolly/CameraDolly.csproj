@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <OutputPath>..\bin\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <Version>1.0.0</Version>
+    <LangVersion>14.0</LangVersion>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <ProjectGuid>d2a050d4-a93c-4064-b0a4-0e46156ee21a</ProjectGuid>
+    <RootNamespace>CameraDolly</RootNamespace>
+    <AssemblyName>CameraDolly</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="PluginCore.cs" />
+    <None Include="ExampleUI.cs" />
+    <Content Include="scripts\installer.nsi" />
+    <Content Include="scripts\post-build.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Decal.Adapter">
+      <HintPath>.\..\deps\Decal.Adapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Decal.Interop.D3DService">
+      <HintPath>..\deps\Decal.Interop.D3DService.DLL</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NSIS-Tool" Version="3.11.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="UtilityBelt.Service" Version="3.0.13">
+      <ExcludeAssets>runtime; build;</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="powershell -ExecutionPolicy RemoteSigned -NoProfile &quot;$(ProjectDir)scripts\post-build.ps1&quot; -NuGetPackageRoot &quot;$(NuGetPackageRoot)&quot; -ProjectDir &quot;$(ProjectDir)&quot;" />
+  </Target>
+</Project>

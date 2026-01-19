@@ -1,0 +1,20 @@
+namespace ACBindingsTest.Internal;
+
+
+/// <summary>Creates and registers a GlobalRegistryCommands instance in the global registry upon construction, enabling system-wide access to command functionality.</summary>
+public unsafe struct ClassRegistrarGlobalRegistryCommands_ClassType
+{
+    // Generated Constructor
+    public ClassRegistrarGlobalRegistryCommands_ClassType() {
+        _ConstructorInternal();
+    }
+
+    // Methods
+
+    /// <summary>Creates and registers a GlobalRegistryCommands instance in the global registry during construction of ClassRegistrarGlobalRegistryCommands_ClassType.
+    /// <code>Offset: 0x00435280
+    /// void __thiscall ClassRegistrarGlobalRegistryCommands_ClassType::ClassRegistrarGlobalRegistryCommands_ClassType(ClassRegistrarGlobalRegistryCommands_ClassType*)</code>
+    /// </summary>
+    public void _ConstructorInternal() => ((delegate* unmanaged[Thiscall]<ref ACBindingsTest.Internal.ClassRegistrarGlobalRegistryCommands_ClassType, void>)0x00435280)(ref this);
+}
+

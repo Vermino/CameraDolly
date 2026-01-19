@@ -1,0 +1,38 @@
+namespace ACBindingsTest.Internal;
+
+
+/// <summary>Stores all data related to a salvage operation, including material identifiers, skill usage, workmanship thresholds, return percentages, and aggregate statistics for items, value, power, and combination results.</summary>
+public unsafe struct SalvageOperationData
+{
+    // Base Classes
+    public ACBindingsTest.Internal.PackableList__uint BaseClass_PackableList__uint; // ACBindingsTest.Internal.PackableList__uint
+
+    // Child Types
+    public unsafe struct SalvageOperationData_vtbl
+    {
+        // Members
+        public static delegate* unmanaged[Thiscall]<ACBindingsTest.Internal.SalvageOperationData*, void> SalvageOperationData_dtor_0; // function pointer
+        public fixed byte gap4[4];
+        public static delegate* unmanaged[Thiscall]<ACBindingsTest.Internal.SalvageOperationData*, uint> GetPackSize; // function pointer
+        public static delegate* unmanaged[Thiscall]<ACBindingsTest.Internal.SalvageOperationData*, void**, uint, uint> Pack; // function pointer
+        public static delegate* unmanaged[Thiscall]<ACBindingsTest.Internal.SalvageOperationData*, void**, uint, int> UnPack; // function pointer
+
+        // Methods
+    }
+
+    // Members
+    public uint m_material;
+    public uint m_skillUsed;
+    public int m_maxWorkmanship;
+    public int m_minWorkmanship;
+    public double m_percentageReturn;
+    public int m_totalSalvageWorkmanship;
+    public int m_totalSalvageValue;
+    public int m_totalCombineWorkmanship;
+    public int m_totalCombineValue;
+    public int m_totalNumberItems;
+    public int m_totalCombinePower;
+
+    // Methods
+}
+
