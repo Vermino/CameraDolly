@@ -14,6 +14,10 @@ namespace CameraDolly
     {
         private bool _enabled;
         public bool Enabled => _enabled;
+
+        // If false, disables manual WASD/Mouse control, but keeps camera override active.
+        public bool IsInputEnabled { get; set; } = true;
+
         private ACBindingsTest.Internal.Position* _currentPos;
         public ACBindingsTest.Internal.Position* CurrentPos => _currentPos;
         public bool IsSmartBoxPtrValid { get; private set; } = true;
@@ -229,10 +233,28 @@ namespace CameraDolly
             {
             }
 
-            // Always call original update_viewer first - handles cells, lights, rendering setup
+            // Fix for Culling/Streaming: Override position BEFORE calling original
+            // This tricks the game into culling based on the camera position instead of the player
+            try
+            {
+                if (Instance != null && Instance._enabled && Instance._currentPos != null && thisPtr != IntPtr.Zero)
+                {
+                    var smartBox = (ACBindingsTest.Internal.SmartBox*)thisPtr;
+
+                    // Override both the cell ID and position
+                    smartBox->viewer.objcell_id = Instance._currentPos->objcell_id;
+                    smartBox->viewer.frame.m_fOrigin = Instance._currentPos->frame.m_fOrigin;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            // Always call original update_viewer - handles cells, lights, rendering setup
             _originalUpdateViewer(thisPtr);
 
             // AFTER original runs, override the position AND cell with our normalized free camera position
+            // We do this again to ensure the rendering camera is correct, in case the function reset it or we want to be sure.
             try
             {
                 if (Instance != null && Instance._enabled && Instance._currentPos != null && thisPtr != IntPtr.Zero)
@@ -423,6 +445,7 @@ namespace CameraDolly
         public void Update()
         {
             if (!_enabled) return;
+            if (!IsInputEnabled) return;
 
             var io = ImGui.GetIO();
 

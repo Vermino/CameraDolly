@@ -46,6 +46,9 @@ namespace CameraDolly
         private readonly CameraH _cameraH;
         private readonly GizmoController _gizmoController;
 
+        private int _testVictimId;
+        private int _testKillerId;
+
         public ExampleUI()
         {
             // Create a new UBService Hud
@@ -108,6 +111,12 @@ namespace CameraDolly
                     if (ImGui.BeginTabItem("Camera Paths"))
                     {
                         DrawCameraPathsTab();
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("Killcam"))
+                    {
+                        DrawKillcamTab();
                         ImGui.EndTabItem();
                     }
 
@@ -295,6 +304,21 @@ namespace CameraDolly
                         ImGui.SameLine();
                         ImGui.Text(
                             $"Pos: {kf.GetGlobalPosition().X:F0}, {kf.GetGlobalPosition().Y:F0}, {kf.GetGlobalPosition().Z:F0}");
+
+                        bool lookAt = kf.LookAtTarget;
+                        if (ImGui.Checkbox("Look At Target", ref lookAt)) kf.LookAtTarget = lookAt;
+
+                        if (kf.LookAtTarget)
+                        {
+                            int tid = kf.TargetId;
+                            if (ImGui.InputInt("Target ID", ref tid)) kf.TargetId = tid;
+
+                            ImGui.SameLine();
+                            if (ImGui.Button("Sel##Tgt"))
+                            {
+                                kf.TargetId = CoreManager.Current.Actions.CurrentSelection;
+                            }
+                        }
                     }
 
                     ImGui.SameLine();
@@ -358,8 +382,38 @@ namespace CameraDolly
         }
 
 
+        private void DrawKillcamTab()
+        {
+            if (_testVictimId == 0) _testVictimId = CoreManager.Current.CharacterFilter.Id;
+
+            ImGui.InputInt("Victim ID", ref _testVictimId);
+            ImGui.InputInt("Killer ID", ref _testKillerId);
+            if (ImGui.Button("Use Selection as Killer"))
+            {
+                _testKillerId = CoreManager.Current.Actions.CurrentSelection;
+            }
+
+            ImGui.Separator();
+
+            if (ImGui.Button("Start Replay"))
+            {
+                ReplaySystem.Instance.StartReplay(_testVictimId, _testKillerId);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Stop Replay"))
+            {
+                ReplaySystem.Instance.StopReplay();
+            }
+
+            if (ReplaySystem.Instance.IsReplaying)
+            {
+                ImGui.TextColored(new Vector4(1, 0, 0, 1), "REPLAY ACTIVE - INPUT BLOCKED");
+            }
+        }
+
         public void Dispose()
         {
+            ReplaySystem.Instance.Dispose();
             CoreManager.Current.RenderFrame -= Current_RenderFrame;
             // Removed debug ray cleanup
             hud.Dispose();

@@ -68,6 +68,11 @@ namespace CameraDolly
         public float Time { get; set; } = 2.0f; // Default duration to reach NEXT node
         public string Notes { get; set; } = "";
 
+        // Target Lock Properties
+        public bool LookAtTarget { get; set; }
+        public int TargetId { get; set; }
+        public Vector3 TargetOffset { get; set; } = new Vector3(0, 0, 0);
+
         // Removed GetTargetPosition to enforce global coordinate usage
 
         public override Quaternion GetTargetRotation() => Rotation;

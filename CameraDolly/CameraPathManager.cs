@@ -388,6 +388,42 @@ namespace CameraDolly
         }
 
 
+        private Quaternion CalculateLookAtRotation(Vector3 cameraGlobalPos, int targetId, Vector3 offset)
+        {
+            try
+            {
+                var obj = CoreManager.Current.WorldFilter[targetId];
+                if (obj != null)
+                {
+                    var coords = obj.Coordinates();
+                    float tEW = (float)coords.East;
+                    float tNS = (float)coords.North;
+                    float tZ = (float)coords.Up;
+
+                    Vector3 targetGlobal = new Vector3(tEW, tNS, tZ);
+                    Vector3 dir = targetGlobal - cameraGlobalPos;
+
+                    // Scale EW/NS to match Z units (approximate)
+                    dir.X *= 240.0f;
+                    dir.Y *= 240.0f;
+
+                    if (dir.LengthSquared() < 0.001f) return Quaternion.Identity;
+
+                    dir = Vector3.Normalize(dir);
+
+                    float yaw = (float)Math.Atan2(dir.X, dir.Y);
+                    float pitch = (float)Math.Asin(Math.Max(-1, Math.Min(1, dir.Z)));
+
+                    var qPitch = Quaternion.CreateFromAxisAngle(Vector3.UnitX, pitch);
+                    var qYaw = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, -yaw);
+
+                    return qYaw * qPitch;
+                }
+            }
+            catch { }
+            return Quaternion.Identity;
+        }
+
         private void EvaluateAtTime(float time, out LocalPosition localPos, out Quaternion rot)
         {
             float t = time;
@@ -419,11 +455,23 @@ namespace CameraDolly
                     localPos = LocalPosition.FromGlobal(globalPos);
 
                     // Handle rotation based on item types
-                    var item1 = CurrentPath.Items[i];
-                    var item2 = CurrentPath.Items[i + 1];
+                    var item1 = CurrentPath.Items[i] as PathKeyframe;
+                    var item2 = CurrentPath.Items[i + 1] as PathKeyframe;
+
+                    Quaternion r1 = item1?.GetTargetRotation() ?? Quaternion.Identity;
+                    Quaternion r2 = item2?.GetTargetRotation() ?? Quaternion.Identity;
+
+                    if (item1 != null && item1.LookAtTarget)
+                    {
+                        r1 = CalculateLookAtRotation(item1.GetGlobalPosition(), item1.TargetId, item1.TargetOffset);
+                    }
+                    if (item2 != null && item2.LookAtTarget)
+                    {
+                        r2 = CalculateLookAtRotation(item2.GetGlobalPosition(), item2.TargetId, item2.TargetOffset);
+                    }
 
                     // Regular interpolation between rotations
-                    rot = Quaternion.Slerp(item1.GetTargetRotation(), item2.GetTargetRotation(), segT);
+                    rot = Quaternion.Slerp(r1, r2, segT);
                     return;
                 }
 
