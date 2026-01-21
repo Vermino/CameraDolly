@@ -413,7 +413,7 @@ namespace CameraDolly
 
         public void Dispose()
         {
-            ReplaySystem.Instance.Dispose();
+            // ReplaySystem is now disposed by PluginCore
             CoreManager.Current.RenderFrame -= Current_RenderFrame;
             // Removed debug ray cleanup
             hud.Dispose();

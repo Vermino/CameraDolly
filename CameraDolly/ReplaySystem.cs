@@ -42,6 +42,38 @@ namespace CameraDolly
         {
             CoreManager.Current.RenderFrame += Current_RenderFrame;
             CoreManager.Current.WindowMessage += Current_WindowMessage;
+            try
+            {
+                CoreManager.Current.CharacterFilter.Death += CharacterFilter_Death;
+            }
+            catch (Exception ex)
+            {
+                PluginCore.Log(ex);
+            }
+        }
+
+        private void CharacterFilter_Death(object sender, DeathEventArgs e)
+        {
+            try
+            {
+                // Auto-trigger replay on death
+                // We try to find the killer, but CharacterFilter.Death event usually contains text message.
+                // We might need to infer killer from WorldFilter or just default to 0 (victim POV fallback).
+
+                int victimId = CoreManager.Current.CharacterFilter.Id;
+                int killerId = 0; // Default to unknown (ReplaySystem will fallback to victim POV)
+
+                // Experimental: Try to find a recent attacker or check who has high threat/aggro if exposed.
+                // For now, we rely on the fallback.
+
+                StartReplay(victimId, killerId);
+
+                PluginCore.Log($"Killcam triggered for victim {victimId}");
+            }
+            catch (Exception ex)
+            {
+                PluginCore.Log(ex);
+            }
         }
 
         private void Current_WindowMessage(object sender, WindowMessageEventArgs e)
@@ -293,6 +325,11 @@ namespace CameraDolly
 
         public void Dispose()
         {
+            try
+            {
+                CoreManager.Current.CharacterFilter.Death -= CharacterFilter_Death;
+            }
+            catch { }
             CoreManager.Current.RenderFrame -= Current_RenderFrame;
             CoreManager.Current.WindowMessage -= Current_WindowMessage;
             _instance = null;

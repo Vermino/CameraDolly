@@ -50,6 +50,8 @@ namespace CameraDolly
         {
             try
             {
+                // Initialize ReplaySystem to start recording buffer
+                var sys = ReplaySystem.Instance;
                 ui = new ExampleUI();
             }
             catch (Exception ex)
@@ -73,6 +75,7 @@ namespace CameraDolly
             {
                 // clean up our ui view
                 ui.Dispose();
+                ReplaySystem.Instance.Dispose();
             }
             catch (Exception ex)
             {
